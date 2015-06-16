@@ -86,6 +86,6 @@ HAR.avgs <- HAR %>%
   summarise_each(funs(mean))
 
 cat('Result is: HAR.avgs\n')
-cat('Exporting to CSV..')
+cat('Exporting to TXT..')
 write.table(HAR.avgs, file="HAR-avgs.txt", quote=FALSE, row.names=FALSE)
 cat('.done\n')
