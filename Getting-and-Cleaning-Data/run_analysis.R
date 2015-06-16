@@ -55,12 +55,14 @@ close(prbar)
 # 2. Extract only the measurements on the mean and standard deviation for
 #    each measurement. => I'll go for "...-mean(" and "...-std(".
 #    See the README file for explanation.
-# 4. Appropriately label the data set with descriptive variable names 
 # ----------------------------------------------------------------------
 ms.inx <- grep('(mean|std)[(]', names(HAR), ignore.case=TRUE, value=FALSE)
 ms <- grep('(mean|std)[(]', names(HAR), ignore.case=TRUE, value=TRUE)
 names(HAR) <- 1:ncol(HAR)  # avoid [duplicate column names]-error
 HAR <- select(HAR, 1, ms.inx, ncol(HAR))
+
+# 4. Appropriately label the data set with descriptive variable names 
+# ----------------------------------------------------------------------
 names(HAR) <- c('subject', ms, 'activity')
 
 # 3. Use descriptive activity names to name the activities in the data set.
