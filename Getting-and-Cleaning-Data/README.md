@@ -18,6 +18,9 @@ The script `run_analysis.R` operates on the UCI HAR Dataset
 (see the Coursera page for *Getting and Cleaning Data*).
 Either put the dataset in the current directory or uncomment
 the `setwd()`-Line in the script and point it to the correct folder.
+The script processes the input data and creates an output data_frame
+`HAR.avgs`, which is exported immediately into a file 
+`HAR-avgs.txt`.
 
 ### 1. Merge the training and the test sets to create one data set.
 
@@ -37,9 +40,8 @@ dplyr uses for column name comparison.
 
 ### 4. Appropriately label the data set with descriptive variable names 
 
-I find it easier to first label the columns and afterwards change to
+I find it easier to first label the columns and afterwards change the
 activity-column's data type.
-
 
 ### 3. Use descriptive activity names to name the activities in the data set.
 
