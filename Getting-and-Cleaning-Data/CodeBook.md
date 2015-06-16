@@ -5,11 +5,14 @@ This page builds on top of information provided by the
 [UCI page](http://archive.ics.uci.edu/ml/datasets/Human+Activity+Recognition+Using+Smartphones#)
 for the HAR data set.  Please consult this page, if you have not yet done so.
 
+Dataset Columns
+--------------------
+
 ### Output variable
 
 * activity: one of "laying", "sitting", "standing", "walking", "walking_downstairs", "walking_upstairs"
 
-### qualitative varibable
+### qualitative variable
 
 * subject: test person's ID 1..30
 
@@ -25,9 +28,11 @@ for the HAR data set.  Please consult this page, if you have not yet done so.
 * tBodyGyro-std()-X tBodyGyro-std()-Y tBodyGyro-std()-Z
 * tBodyGyroJerk-mean()-X tBodyGyroJerk-mean()-Y tBodyGyroJerk-mean()-Z
 * tBodyGyroJerk-std()-X tBodyGyroJerk-std()-Y tBodyGyroJerk-std()-Z
-* tBodyAccMag-mean() tBodyAccMag-std() tGravityAccMag-mean()
-* tGravityAccMag-std() tBodyAccJerkMag-mean() tBodyAccJerkMag-std()
-* tBodyGyroMag-mean() tBodyGyroMag-std() tBodyGyroJerkMag-mean() tBodyGyroJerkMag-std()
+* tBodyAccMag-mean() tBodyAccMag-std()
+* tGravityAccMag-mean() tGravityAccMag-std()
+* tBodyAccJerkMag-mean() tBodyAccJerkMag-std()
+* tBodyGyroMag-mean() tBodyGyroMag-std()
+* tBodyGyroJerkMag-mean() tBodyGyroJerkMag-std()
 * fBodyAcc-mean()-X fBodyAcc-mean()-Y fBodyAcc-mean()-Z
 * fBodyAcc-std()-X fBodyAcc-std()-Y fBodyAcc-std()-Z
 * fBodyAccJerk-mean()-X fBodyAccJerk-mean()-Y fBodyAccJerk-mean()-Z
@@ -39,3 +44,6 @@ for the HAR data set.  Please consult this page, if you have not yet done so.
 * fBodyBodyGyroMag-mean() fBodyBodyGyroMag-std()
 * fBodyBodyGyroJerkMag-mean() fBodyBodyGyroJerkMag-std()
 
+Please refer to the UCI HAR web page for a description of the numeric variables.
+
+I decided to include only "real" mean values.
