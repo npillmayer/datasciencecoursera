@@ -75,4 +75,6 @@ calculating the mean. Column names are changed by prepending "Mean-".
 The final data frame is therefore a collection of means of means and
 of means of standard deviations.
 
+6 activities for 30 subjects results in 180 observations.
+
 

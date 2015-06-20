@@ -11,7 +11,7 @@
 library(dplyr)
 
 # Use current directory or set WD
-setwd('~/prg/data-science/data/Getting-and-Cleaning-Data/assignment-HAR/UCI HAR Dataset')
+#setwd('~/prg/data-science/data/Getting-and-Cleaning-Data/assignment-HAR/UCI HAR Dataset')
 
 # Load meta information
 features <- read.table('features.txt', stringsAsFactors=FALSE)
@@ -56,14 +56,14 @@ close(prbar)
 #    each measurement. => I'll go for "...-mean(" and "...-std(".
 #    See the README file for explanation.
 # ----------------------------------------------------------------------
-ms.inx <- grep('(mean|std)[(]', names(HAR), ignore.case=TRUE, value=FALSE)
-ms <- grep('(mean|std)[(]', names(HAR), ignore.case=TRUE, value=TRUE)
+ms.inx <- grep('(mean|std)[(]', names(HAR), ignore.case=TRUE, value=FALSE) # find positions
+ms <- grep('(mean|std)[(]', names(HAR), ignore.case=TRUE, value=TRUE) # find column names
 names(HAR) <- 1:ncol(HAR)  # avoid [duplicate column names]-error
-HAR <- select(HAR, 1, ms.inx, ncol(HAR))
+HAR <- select(HAR, 1, ms.inx, ncol(HAR))   # select by column indices
 
 # 4. Appropriately label the data set with descriptive variable names 
 # ----------------------------------------------------------------------
-ms <- gsub("[()]", "", ms)
+ms <- gsub("[()]", "", ms)   # remove '()' in column names
 names(HAR) <- c('subject', ms, 'activity')
 
 # 3. Use descriptive activity names to name the activities in the data set.
@@ -81,6 +81,7 @@ HAR <- HAR %>%
 # 5. From the data set in step 4, creates a second, independent tidy
 #    data set with the average of each variable for each activity and
 #    each subject.
+# Using dplyr grouping and summarising for this.
 # ----------------------------------------------------------------------
 HAR.avgs <- HAR %>%
   group_by(activity, subject) %>%
@@ -88,7 +89,7 @@ HAR.avgs <- HAR %>%
 mms <- paste("Mean-", ms, sep="")
 names(HAR.avgs) <- c('activity', 'subject', mms)
 
-cat('Result is: HAR.avgs\n')
+cat('Resulting data_frame is: HAR.avgs\n')
 cat('Exporting to TXT..')
 write.table(HAR.avgs, file="HAR-avgs.txt", quote=FALSE, row.names=FALSE)
 cat('.done\n')
