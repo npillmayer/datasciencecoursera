@@ -36,13 +36,15 @@ Then, for further processing, this will be converted to a
 ### 2. Extract only the measurements on the mean and standard deviation for each measurement
 
 The script extracts columns with the patterns "-mean(" and "-std(".
-Approaching it with dplyr's `select()` does not work due to the method
-dplyr uses for column name comparison.
+Approaching it directly with dplyr's `select()` does not work due to the method
+dplyr uses for column name comparison. We rather index the columns
+and use `select()` on these.
 
 ### 4. Appropriately label the data set with descriptive variable names 
 
 I find it easier to first label the columns and afterwards change the
-activity-column's data type.
+activity-column's data type.  Column names correspond to the names of
+the original data set, except that '()' are removed.
 
 ### 3. Use descriptive activity names to name the activities in the data set.
 
@@ -51,4 +53,8 @@ factorize the column.
 
 ### 5. From the data set in step 4, creates a second, independent tidy data set.
 
-This is done easily using dplyr-means.
+This is done easily using dplyr-means: group by activity and subject,
+then summarise each numeric measurement column with `mean()`.
+
+We directly export the resulting data frame to a "HAR-avgs.txt" in the
+current working directory.
