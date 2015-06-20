@@ -10,6 +10,7 @@ Files:
 * run_analysis.R
 * CodeBook.md
 * README.md (this file)
+* HAR-avgs.txt
 
 Howto:
 ------

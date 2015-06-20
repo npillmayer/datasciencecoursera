@@ -63,6 +63,7 @@ HAR <- select(HAR, 1, ms.inx, ncol(HAR))
 
 # 4. Appropriately label the data set with descriptive variable names 
 # ----------------------------------------------------------------------
+ms <- gsub("[()]", "", ms)
 names(HAR) <- c('subject', ms, 'activity')
 
 # 3. Use descriptive activity names to name the activities in the data set.
@@ -84,6 +85,8 @@ HAR <- HAR %>%
 HAR.avgs <- HAR %>%
   group_by(activity, subject) %>%
   summarise_each(funs(mean))
+mms <- paste("Mean-", ms, sep="")
+names(HAR.avgs) <- c('activity', 'subject', mms)
 
 cat('Result is: HAR.avgs\n')
 cat('Exporting to TXT..')
