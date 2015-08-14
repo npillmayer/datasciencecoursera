@@ -15,6 +15,11 @@ shinyServer(function(input, output) {
              xlab=input$xcol, ylab=input$ycol)
         legend("topright", legend=unique(iris$Species), pch=1,
                col=c('black', 'red', 'green'))
-        
     })
+    m <- reactive({ iris[, c(input$xcol, input$ycol)] })
+    d <- reactive({ dist(m()) })
+    h <- reactive({ hclust(d()) })
+    t <- reactive({ cutree(h(), k=3) })
+    tt <- reactive({ table(t()) })
+    output$table <- renderText({ print(tt())  })
 })
