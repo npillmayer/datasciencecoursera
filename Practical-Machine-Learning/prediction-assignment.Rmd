@@ -1,0 +1,162 @@
+
+
+Summary
+==========
+
+In this project, our goal will be to use data from accelerometers on the belt, forearm, 
+arm, and dumbell of 6 participants. They were asked to perform barbell lifts correctly 
+and incorrectly in 5 different ways. More information is available from the website here:
+http://groupware.les.inf.puc-rio.br/har
+(see the section on the Weight Lifting Exercise Dataset).
+The goal of our project is to predict the manner in which they did the exercise. 
+This is the "*classe*" variable in the training set.
+
+The algorithm best fit for this problem seems to be random forests. It shows a high
+accuracy and performs very well on the testing data set.
+
+Data Acquisition and Cleaning
+====================
+
+```{r}
+suppressPackageStartupMessages(library(dplyr))
+set.seed(4711)
+```
+
+The URL below offers a training data set and a testing data set. We will first load the
+training data set.
+
+```{r}
+setwd('~/prg/data-science/R/Practical-Machine-Learning/project')
+localdata <- './pml-training.csv'
+if (! file.exists(localdata)) {
+    download.file("http://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv", localdata)
+}
+training <- read.csv('./pml-training.csv', na.strings=c("", "NA","#DIV/0!"))
+```
+
+The training set is large enough to split it into a smaller training set and a sub-sample
+for testing.
+
+```{r}
+suppressPackageStartupMessages(library(caret))
+sample <- createDataPartition(y=training$classe, p=0.75, list=FALSE)
+train <- training[sample, ] 
+test <- training[-sample, ]
+train.df <- as_data_frame(train)
+test.df <- as_data_frame(test)
+message('training sub-sample: ', dim(train.df)[[1]], ' x ', dim(train.df)[[2]])
+```
+
+The first seven columns of the data set are not suitable as predictors and will therefore
+be omitted. Furthermore we will delete predictors with too few values and/or near zero
+variance.  The last step of data cleansing will be to remove predictors with too many
+*NA* values. We choose a threshold of 40%.
+
+```{r}
+# omit non-predictors (user name, timestamps, ...)
+train.df <- select(train.df, -c(1:7))
+# omit predictors with near zero variance and/or few values
+nzv <- nearZeroVar(train.df)
+train.df <- select(train.df, -nzv)
+# omit predictors with more than 40% of NAs
+na.threshold = 0.4 * nrow(train.df)
+not.too.many.nas <- ( colSums(is.na(train.df)) < na.threshold )
+train.df <- select(train.df, which(not.too.many.nas))
+message('training sub-sample: ', dim(train.df)[[1]], ' x ', dim(train.df)[[2]])
+```
+
+Modelling: Random Forests and Decision Trees
+=====================
+
+We wil try two machine learning algorithms: random forest and decision tree.
+
+```{r}
+suppressPackageStartupMessages(library(randomForest))
+suppressPackageStartupMessages(library(rpart))
+```
+
+Now train the 2 models:
+
+```{r}
+m.rf <- train(classe ~ ., data=train.df, method="rf")
+m.dtree <- rpart(classe ~ ., data=train.df, method="class")
+```
+
+We predict the testing sub-sample *test.df* for cross-validation and calculate
+the confusion matrices for both models.
+
+```{r}
+pred.rf <- predict(m.rf, test.df)
+cm.rf <- confusionMatrix(pred.rf, test.df$classe)
+pred.dtree <- predict(m.dtree, test.df, type="class")
+cm.dtree <- confusionMatrix(pred.dtree, test.df$classe)
+```
+
+The *accuracy* and *kappa* value gives us a first hint that the random forest algorithm 
+performs quite well.
+
+```{r}
+acc.dtree <- c(cm.dtree$overall[[1]], cm.dtree$overall[[2]]) # accuracy and kappa
+acc.rf <- c(cm.rf$overall[[1]], cm.rf$overall[[2]])    # accuracy and kappa
+```
+
+```{r echo=FALSE}
+t <- cbind(acc.rf, acc.dtree) # construct a quick output table
+colnames(t) <- c('Random Forest', 'Decision Tree');
+rownames(t) <- c('Accuracy', 'Kappa')
+knitr::kable(t)
+```
+
+The out of sample error is equal to *1 - accuracy*, thus resulting to ~*0.006* for the
+random forest model. The confusion matrix confirms the qualitiy of the prediction.
+
+```{r}
+print(cm.rf$table)
+```
+
+Predicting the Testing Data Set
+==============
+
+We need to load the original testing data set.
+
+```{r}
+localdata <- './pml-testing.csv'
+if (! file.exists(localdata)) {
+    download.file("http://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv", localdata)
+}
+testing <- read.csv('./pml-testing.csv', na.strings=c("", "NA","#DIV/0!"))
+testing.df <- as_data_frame(testing)
+```
+
+Now use our random forest model to predict the original testing data set.
+
+```{r}
+pred.rf.testing <- predict(m.rf, testing)
+```
+
+The testing data set does not contain a *classe* column, thus we are unable to
+cross-check our results.
+
+## Export of the Assignment Solution
+
+The result has to be transferred to Coursera.org by saving every single prediction
+in its own file.
+The following piece of code will save the contents of *pred.rf.testing* to individula files.
+
+```{r}
+pml_write_files = function(x) {
+    n = length(x)
+    for (i in 1:n) {
+        filename = paste0("problem_id_", i, ".txt")
+        write.table(x[i], file=filename,quote=FALSE, row.names=FALSE, col.names=FALSE)
+    }
+}
+
+pml_write_files(pred.rf.testing)
+```
+
+References
+===========
+
+Velloso, E.; Bulling, A.; Gellersen, H.; Ugulino, W.; Fuks, H. Qualitative Activity Recognition of Weight Lifting Exercises. Proceedings of 4th International Conference in Cooperation with SIGCHI (Augmented Human '13) . Stuttgart, Germany: ACM SIGCHI, 2013.
+
